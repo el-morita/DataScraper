@@ -20,7 +20,16 @@ async function loopthruarray(filename) {
   for (let i = 0; i < records.length; i++) {
     await page.type('input[type= "search"]', records[i].Title, { delay: 10 });
     await page.click('button[aria-label="Search"]');
-    await page.waitForSelector(".List-results-items");
+
+    //only put the area of the code that specific to the area where things will go wrong
+    try {
+      await page.waitForSelector(".List-results-items", { timeout: 1000 });
+    } catch {
+      console.log(records[i].Title + "  :Not Found!");
+      continue;
+    }
+
+    //"for each" is used with "continue" method
 
     const titles = await page.evaluate(() => {
       const links = document.querySelectorAll(".List-results-items h3 a");
@@ -37,13 +46,9 @@ async function loopthruarray(filename) {
       });
       return searchedArr;
     });
+
     console.log(titles);
   }
 }
 
 loopthruarray("Ass10Batch1.csv");
-
-// the term "Did you read the documentation" is actually asking do you know what the
-// ie library is for and how to use it? Always read thru borrow code line by line to understand
-// // what it's doing before trying to use it in your own code.
-// "Are you uptodate?" Means are you using the latest version of the code or old code from 6 months ago?

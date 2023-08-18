@@ -18,8 +18,26 @@ async function loopthruarray(filename) {
   const records = await csvtojson().fromFile(filename);
 
   for (let i = 0; i < records.length; i++) {
-    await page.type('input[type= "search"]', records[i].Title, { delay: 100 });
+    await page.type('input[type= "search"]', records[i].Title, { delay: 10 });
     await page.click('button[aria-label="Search"]');
+    await page.waitForSelector(".List-results-items");
+
+    const titles = await page.evaluate(() => {
+      const links = document.querySelectorAll(".List-results-items h3 a");
+      //".result-item h3 a" searches for the anchor element that is specifc
+      //to the h3 which is under .result-item. Note sometimes .result-item
+      //had a CSS descriptor in front of it to describe it as part of the class name
+      //but when you use "result-item" in a search you didn't need the CSS descriptor
+      let searchedArr = [];
+
+      links.forEach((link) => {
+        searchedArr.push({
+          title: link.textContent,
+        });
+      });
+      return searchedArr;
+    });
+    console.log(titles);
   }
 }
 
