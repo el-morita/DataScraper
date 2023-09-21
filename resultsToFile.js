@@ -18,7 +18,6 @@ async function loopthruarray(filename) {
     try {
       await page.waitForSelector(".List-results-items", { timeout: 1000 });
     } catch {
-      //console.log(records[i].Title + "  :Not Found!");
       const notFound = records[i].Title + "  :Not Found!";
       fs.appendFile("EntriesNotFound.txt", notFound + "\n");
 
